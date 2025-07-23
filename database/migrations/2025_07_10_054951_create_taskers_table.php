@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('taskers', function (Blueprint $table) {
             $table->uuid("id")->primary();
-            $table->string('username', 50)->unique();
-            $table->string('password')->nullable();
-            $table->string('first_name', 50);
-            $table->string('last_name', 50);
-            $table->string('provider', 50)->nullable();
-            $table->string('provider_id', 100)->unique()->nullable();
+            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
+            $table->text('bio')->nullable();
+            $table->string('company_name', 255)->nullable();
+            $table->string('tax_code', 25)->nullable();
             $table->timestamp('deleted_at')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->timestamp('block_until')->nullable();
             $table->timestamps();
         });
     }
@@ -31,5 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('taskers');
     }
 };
