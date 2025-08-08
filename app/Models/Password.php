@@ -6,6 +6,9 @@ use App\Casts\TimestampCast;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperPassword
+ */
 class Password extends Model
 {
     use HasUuids;
@@ -15,9 +18,7 @@ class Password extends Model
     protected $casts = [
         'id' => 'string',
         'user_id' => 'string',
-        'is_verified' => 'boolean',
-        'otp_sent_at' => TimestampCast::class,
-        'expired_in' => TimestampCast::class,
+        'is_verified' => 'boolean'
     ];
     public function user()
     {

@@ -13,6 +13,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -32,11 +35,8 @@ class User extends Authenticatable implements JWTSubject
     public $incrementing = false;
     protected $casts = [
         'id' => 'string',
-        'is_active' => 'boolean',
-        'block_until' => TimestampCast::class,
-        'created_at' => TimestampCast::class,
-        'updated_at' => TimestampCast::class,
-        'deleted_at' => TimestampCast::class,
+        'username' => 'string',
+        'is_active' => 'boolean'
     ];
 
     /**
@@ -58,14 +58,28 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-    public function password()
+
+    public function getPasswordAttribute()
     {
-        return $this->passwords()->latest()->first();
+        return $this->passwords()->latest()->value('password');
     }
-    public function email()
+    public function getEmailAttribute()
     {
-        return $this->emails()->where("is_active", true)->latest()->first();
+        return $this->emails()->latest()->value('email');
     }
+    public function routeNotificationForMail($notification)
+    {
+        return $this->email()->email ?? null;
+    }
+    public function getRoleAttribute()
+    {
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = $role->role;
+        }
+        return $roles;
+    }
+
 
     // RELATIONSHIPS - hasOne
     public function setting()
@@ -89,6 +103,10 @@ class User extends Authenticatable implements JWTSubject
     public function roles()
     {
         return $this->hasMany(Role::class);
+    }
+    public function refreshTokens()
+    {
+        return $this->hasMany(RefreshToken::class);
     }
     public function emails()
     {
@@ -124,10 +142,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(TaskSolution::class);
     }
-    public function solutionsInteractions()
-    {
-        return $this->hasMany(SolutionInteraction::class);
-    }
+
     public function reports()
     {
         return $this->hasMany(Report::class);
@@ -153,12 +168,25 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Payment::class);
     }
 
-
-
+    // RELATIONSHIPS - Belongs To Many
+    public function solutionInteractions()
+    {
+        return $this->belongsToMany(Solution::class, 'solution_interactions')
+            ->withPivot('interact')
+            ->withTimestamps();
+    }
     // RELATIONSHIPS - MORPHABLE
     public function schedules()
     {
         return $this->morphMany(Schedule::class, 'scheduleable');
+    }
+    public function avatar()
+    {
+        return $this->morphOne(File::class, 'fileable')->where('usage', 'avatar');
+    }
+    public function cv()
+    {
+        return $this->morphOne(File::class, 'fileable')->where('usage', 'cv');
     }
 
     // protected static function boot()

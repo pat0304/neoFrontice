@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperFile
+ */
 class File extends Model
 {
     use HasUuids;
@@ -13,7 +16,6 @@ class File extends Model
         'user_id' => 'string',
         'fileable_id' => 'string',
         'size' => 'integer',
-        'visibility' => 'boolean',
     ];
 
     public function fileable()

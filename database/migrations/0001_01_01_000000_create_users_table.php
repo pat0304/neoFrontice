@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->uuid("id")->primary();
             $table->string('username', 50)->unique();
-            $table->string('password')->nullable();
+            // $table->string('password')->nullable();
             $table->string('first_name', 50);
             $table->string('last_name', 50);
             $table->string('provider', 50)->nullable();
             $table->string('provider_id', 100)->unique()->nullable();
             $table->timestamp('deleted_at')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->default(false);
             $table->timestamp('block_until')->nullable();
             $table->timestamps();
         });
@@ -29,7 +29,5 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-    }
+    public function down(): void {}
 };

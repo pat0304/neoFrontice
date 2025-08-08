@@ -6,6 +6,9 @@ use App\Casts\TimestampCast;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperNotification
+ */
 class Notification extends Model
 {
     use HasUuids;
@@ -18,7 +21,6 @@ class Notification extends Model
         'id' => 'string',
         'user_id' => 'string',
         'is_read' => 'boolean',
-        'created_at' => TimestampCast::class,
     ];
 
     public function user()

@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperComment
+ */
 class Comment extends Model
 {
+    use HasUuids;
     protected $fillable = [
         'user_id',
         'is_admin_feedback',
@@ -17,7 +22,7 @@ class Comment extends Model
         'right',
         'is_deleted',
         'is_updated',
-        
+
     ];
 
     public function user()
@@ -33,5 +38,13 @@ class Comment extends Model
     public function parent()
     {
         return $this->belongsTo(Comment::class, 'parent_id');
+    }
+    public function children()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+    public function interactions()
+    {
+        return $this->hasMany(CommentInteraction::class);
     }
 }

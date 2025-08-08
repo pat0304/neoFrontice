@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('file_path', 255);
             $table->string('mime_type', 50);
             $table->integer('size');
-            $table->enum('usage', ['avatar', 'attachment', 'source', 'cv', 'other'])->default('other');
+            $table->enum('usage', ['avatar', 'attachment', 'source', 'figma', 'cv', 'other'])->default('other');
             $table->enum('visibility', ['public', 'private'])->default('private');
 
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
     }
 

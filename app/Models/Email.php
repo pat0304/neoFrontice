@@ -6,6 +6,9 @@ use App\Casts\TimestampCast;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @mixin IdeHelperEmail
+ */
 class Email extends Model
 {
     use HasUuids;
@@ -17,12 +20,9 @@ class Email extends Model
         'user_id' => 'string',
         'is_verified' => 'boolean',
         'is_active' => 'boolean',
-        'expires_at' => TimestampCast::class,
-        'created_at' => TimestampCast::class,
-        'updated_at' => TimestampCast::class,
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
     }
 }
