@@ -30,10 +30,20 @@ class EmailController extends Controller
         }
         return BaseResponse::success($email, 'Email verified successfully');
     }
+    public function verifyEmailByOTP(Request $request)
+    {
+        $request->validate([
+            'otp_code' => 'required|size:6'
+        ]);
+        $email = $this->emailService->verifyEmailByToken($request['otp_code']);
+        if (!$email) {
+            return BaseResponse::error('Invalid or expired OTP', 400);
+        }
+        return BaseResponse::success($email, 'Email verified successfully');
+    }
     public function sendMail()
     {
         try {
-
             $this->emailService->sendMail(auth()->guard()->user()->email);
             return BaseResponse::success(null, 'Verification email sent successfully');
         } catch (\Exception $e) {

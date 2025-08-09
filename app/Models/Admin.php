@@ -15,6 +15,7 @@ class Admin extends Model
         'id',
         'admin_role_id',
     ];
+    protected $with = ['adminRole'];
     public function user()
     {
         return $this->belongsTo(User::class, 'id', 'id');

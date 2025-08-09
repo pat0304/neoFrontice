@@ -8,6 +8,7 @@ use App\Services\Auth\AuthService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Responses\User\UserResponse;
 use App\Services\Auth\RefreshTokenService;
 use Illuminate\Auth\AuthenticationException;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -33,7 +34,7 @@ class AuthController extends Controller
         try {
             $token =  $this->authService->register($request);
             if (!$token) {
-                return response()->json(['error' => 'Registration failed'], 400);
+                return BaseResponse::error("Registration failed", 400);
             }
             $cookie = cookie('access_token', $token, 60, null, null, true, true, false, 'Strict');
             return BaseResponse::success(null, "Register Successfully", 201)->cookie($cookie);
@@ -71,7 +72,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return BaseResponse::success(auth()->guard()->user());
+        return UserResponse::make(auth()->guard()->user());
     }
 
     /**

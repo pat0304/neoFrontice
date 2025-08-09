@@ -36,14 +36,16 @@ class AuthService
             $this->emailService->create($data['email'], $user);
             $this->passwordService->create($data['password'], $user);
             $token = auth()->guard()->login($user);
+            $role = new RoleService($user);
+            $role->create($data['role']);
             if (!$token) {
-                return BaseResponse::error('Registration failed', 400);
+                return false;
             }
             DB::commit();
             return $token;
         } catch (\Exception $e) {
             DB::rollBack();
-            return BaseResponse::error('Registration failed: ' . $e->getMessage(), 400);
+            throw $e;
         }
     }
     /**

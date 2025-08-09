@@ -29,6 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'provider',
         'provider_id',
         'is_active',
+        'is_verified',
         'block_until',
     ];
     protected $keyType = 'string';
@@ -36,7 +37,8 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'id' => 'string',
         'username' => 'string',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
+        'is_verified' => 'boolean'
     ];
 
     /**
@@ -79,6 +81,21 @@ class User extends Authenticatable implements JWTSubject
         }
         return $roles;
     }
+    public function getMainRoleAttribute()
+    {
+        return $this->roles()->where('main', true)->first()->role;
+    }
+    public function getLinksAttribute()
+    {
+        $links = [];
+        foreach ($this->links as $link) {
+            $links[] = [
+                'id' => $link->id,
+                'name' => $link->name,
+                'url' => $link->url,
+            ];
+        }
+    }
 
 
     // RELATIONSHIPS - hasOne
@@ -88,15 +105,15 @@ class User extends Authenticatable implements JWTSubject
     }
     public function taskee()
     {
-        return $this->hasOne(Taskee::class);
+        return $this->hasOne(Taskee::class, 'id', 'id');
     }
     public function tasker()
     {
-        return $this->hasOne(Tasker::class);
+        return $this->hasOne(Tasker::class, 'id', 'id');
     }
     public function admin()
     {
-        return $this->hasOne(Admin::class);
+        return $this->hasOne(Admin::class, 'id', 'id');
     }
 
     // RELATIONSHIPS - Has Many

@@ -29,7 +29,7 @@ class VerifyEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verify Email',
+            subject: __('OtpCodeNToken.subject', ['otp' => $this->details['otp_code'], 'app_name' => env('APP_NAME')]),
         );
     }
 

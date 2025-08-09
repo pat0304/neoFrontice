@@ -50,6 +50,30 @@ class EmailService
             throw new \Exception('Email not found: ' . $e->getMessage());
         }
     }
+    public function verifyEmailByOTP(string $otp)
+    {
+        try {
+            DB::beginTransaction();
+            $email = Email::where('otp_code', $otp)
+                ->where("user_id", auth()->guard()->user()->id)
+                ->first();
+
+            if (!$email || $email->expires_at < now() || !$email->is_active) {
+                return false;
+            }
+            $email->is_verified = true;
+            $email->save();
+            $user = $email->user;
+            $user->is_active = true;
+            $user->is_verified = true;
+            $user->save();
+            DB::commit();
+            return $email;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception('Database transaction failed: ' . $e->getMessage());
+        }
+    }
     public function verifyEmailByToken(string $token)
     {
         try {
@@ -65,6 +89,7 @@ class EmailService
             $email->save();
             $user = $email->user;
             $user->is_active = true;
+            $user->is_verified = true;
             $user->save();
             DB::commit();
             return $email;

@@ -27,6 +27,7 @@ class RegisterRequest extends FormRequest
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:emails,email',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:tasker,taskee'
         ];
     }
     public function messages(): array
