@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('provider_id', 100)->unique()->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->boolean('is_active')->default(false);
+            $table->boolean('is_verified')->default(0);
             $table->timestamp('block_until')->nullable();
             $table->timestamps();
         });

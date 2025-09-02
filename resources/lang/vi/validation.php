@@ -33,5 +33,11 @@ return [
             'required' => 'Vai trò là bắt buộc.',
             'in'       => 'Vai trò chỉ có thể là tasker hoặc taskee.',
         ],
+        'tax_code' => [
+            'required_if' => 'Mã số thuế là bắt buộc khi vai trò là tasker',
+        ],
+        'company_name' => [
+            'required_if' => 'Tên công ty là bắt buộc khi vai trò là tasker',
+        ],
     ],
 ];

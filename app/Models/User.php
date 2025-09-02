@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Throwable;
 
 /**
  * @mixin IdeHelperUser
@@ -38,7 +40,7 @@ class User extends Authenticatable implements JWTSubject
         'id' => 'string',
         'username' => 'string',
         'is_active' => 'boolean',
-        'is_verified' => 'boolean'
+        'is_verified' => 'boolean',
     ];
 
     /**
@@ -68,6 +70,10 @@ class User extends Authenticatable implements JWTSubject
     public function getEmailAttribute()
     {
         return $this->emails()->latest()->value('email');
+    }
+    public function getLangAttribute()
+    {
+        return $this->setting()->value('lang');
     }
     public function routeNotificationForMail($notification)
     {
@@ -197,22 +203,36 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(Schedule::class, 'scheduleable');
     }
-    public function avatar()
+    public function getAvatarAttribute()
     {
-        return $this->morphOne(File::class, 'fileable')->where('usage', 'avatar');
+        $file = $this->files()->where('usage', 'avatar')->first();
+        return $file ? $file->url : null;
     }
-    public function cv()
+    public function getCvAttribute()
     {
-        return $this->morphOne(File::class, 'fileable')->where('usage', 'cv');
+        $file = $this->files()->where('usage', 'cv')->first();
+        return $file ? $file : null;
     }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
-    //     static::creating(function ($model) {
-    //         if (empty($model->id)) {
-    //             $model->id = \Illuminate\Support\Str::uuid();
-    //         }
-    //     });
-    // }
+    //CUSTOM Function
+    public function useUpdate(array $array)
+    {
+        DB::transaction(function () use ($array) {
+            $active_role = request()->get('active_role');
+
+            $this->update($array);
+            $this[$active_role]->update($array);
+            return $this;
+        });
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            Setting::create([
+                "user_id" => $model->id
+            ]);
+        });
+    }
 }

@@ -18,14 +18,35 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public function taskSolutions(){
+    public function taskSolutions()
+    {
         return $this->hasMany(TaskSolution::class);
     }
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
-    public function taskTechnicals(){
+    public function taskTechnicals()
+    {
         return $this->belongsToMany(Technical::class, 'task_technicals');
+    }
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+    public function getAttachmentAttribute()
+    {
+        $file = $this->files()->where('usage', 'attachment')->first();
+        return $file ? $file->url : null;
+    }
+    public function getSourceAttribute()
+    {
+        $file = $this->files()->where('usage', 'source')->first();
+        return $file ? $file->url : null;
+    }
+    public function getFigmaAttribute()
+    {
+        $file = $this->files()->where('usage', 'figma')->first();
+        return $file ? $file->url : null;
     }
 }

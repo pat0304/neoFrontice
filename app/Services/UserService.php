@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\Email;
+use App\Eloquents\UserEloquent;
 use App\Models\User;
-use App\Services\Auth\PasswordService;
+use App\Models\Email;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Request;
+use App\Services\Auth\PasswordService;
 
-class UserService
+class UserService implements UserEloquent
 {
     // Get User
     public function getUserByEmail(string $email)
@@ -44,6 +45,7 @@ class UserService
     // Create User
     public function createUser(array $data)
     {
+        $data['username'] = Str::lower($data['username']);
         $user = new User();
         $user->fill($data);
         $user->save();
@@ -70,5 +72,10 @@ class UserService
         }
 
         return $user;
+    }
+    public function update(User $user, array $array)
+    {
+        $filter_array = array_filter($array, fn($value) => !is_null($value));
+        $user = $user->useUpdate($filter_array);
     }
 }

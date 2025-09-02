@@ -34,6 +34,13 @@ class BaseResponse
             'message' => __('messages.unauthorized'),
         ], 401);
     }
+    public static function forbidden($data = null): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => __('messages.forbidden'),
+        ], 403);
+    }
     public static function notFound($data = null): JsonResponse
     {
         return response()->json([

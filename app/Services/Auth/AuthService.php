@@ -2,14 +2,16 @@
 
 namespace App\Services\Auth;
 
+use App\Eloquents\AuthEloquent;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Responses\BaseResponse;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
-class AuthService
+class AuthService implements AuthEloquent
 {
     private $userService;
     private $emailService;
@@ -23,10 +25,8 @@ class AuthService
         $this->emailService = new EmailService();
         $this->passwordService = new PasswordService();
     }
-    public function register(RegisterRequest $request)
+    public function register(array $data)
     {
-
-        $data = $request->validated();
         if (empty($data['email']) || empty($data['password'])) {
             return BaseResponse::error('Email and password are required', 400);
         }
@@ -63,16 +63,8 @@ class AuthService
             return false;
         }
     }
-
-
-
-    /**
-     * Get the authenticated user's profile.
-     *
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
-     */
-    public function profile()
+    public function update(array $array)
     {
-        return auth()->guard()->user();
+        $filter_array = array_filter($array, fn($value) => !is_null($value));
     }
 }

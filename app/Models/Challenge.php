@@ -44,4 +44,23 @@ class Challenge extends Model
             return $this->translations->first();
         }
     }
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable');
+    }
+    public function getAttachmentAttribute()
+    {
+        $file = $this->files()->where('usage', 'attachment')->first();
+        return $file ? $file->url : null;
+    }
+    public function getSourceAttribute()
+    {
+        $file = $this->files()->where('usage', 'source')->first();
+        return $file ? $file->url : null;
+    }
+    public function getFigmaAttribute()
+    {
+        $file = $this->files()->where('usage', 'figma')->first();
+        return $file ? $file->url : null;
+    }
 }

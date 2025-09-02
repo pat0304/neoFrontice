@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Eloquents\EmailEloquent;
 use App\Http\Controllers\Controller;
 use App\Responses\BaseResponse;
-use App\Services\Auth\EmailService;
 use Illuminate\Http\Request;
 
 class EmailController extends Controller
@@ -16,19 +16,17 @@ class EmailController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __construct(EmailService $emailService)
+    public function __construct(EmailEloquent $EmailEloquent)
     {
-        $this->emailService = $emailService;
+        $this->emailService = $EmailEloquent;
     }
     public function verifyEmailByToken(Request $request)
     {
-        // Logic to verify the email address
-        // This could involve checking a token or code sent to the user's email
         $email = $this->emailService->verifyEmailByToken($request->input('token'));
         if (!$email) {
             return BaseResponse::error('Invalid or expired token', 400);
         }
-        return BaseResponse::success($email, 'Email verified successfully');
+        return BaseResponse::success();
     }
     public function verifyEmailByOTP(Request $request)
     {
@@ -39,7 +37,7 @@ class EmailController extends Controller
         if (!$email) {
             return BaseResponse::error('Invalid or expired OTP', 400);
         }
-        return BaseResponse::success($email, 'Email verified successfully');
+        return BaseResponse::success();
     }
     public function sendMail()
     {

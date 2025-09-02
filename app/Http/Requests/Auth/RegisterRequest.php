@@ -27,7 +27,9 @@ class RegisterRequest extends FormRequest
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:emails,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:tasker,taskee'
+            'role' => 'required|in:tasker,taskee',
+            'tax_code' => 'required_if:role,tasker|string|max:255',
+            'company_name' => 'required_if:role,tasker|string|max:255',
         ];
     }
     public function messages(): array
@@ -39,6 +41,8 @@ class RegisterRequest extends FormRequest
             'email.required' => 'Email is required',
             'password.required' => 'Password is required',
             'password.confirmed' => 'Password confirmation does not match',
+            'role.required' => 'Role is required',
+            'role.in' => 'Role must be taskee/tasker'
         ];
     }
 }

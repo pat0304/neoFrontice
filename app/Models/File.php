@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @mixin IdeHelperFile
@@ -25,5 +26,13 @@ class File extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function getUrlAttribute()
+    {
+        if ($this->visibility === 'public') {
+            return Storage::disk('s3')->temporaryUrl($this->file_path, now()->addMinutes(10));
+        } else {
+            return Storage::disk('s3')->temporaryUrl($this->file_path, now()->addMinutes(1));
+        }
     }
 }

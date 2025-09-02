@@ -14,23 +14,19 @@ class AuthMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, $auth = null): Response
     {
         if (auth()->guard()->check()) {
             $user = auth()->guard()->user();
+            if ($auth == 'verify') {
+                return $next($request);
+            }
             $activeRole = $request->header('Active-Role') ?? $user->main_role ?? null;
-            if ($activeRole) {
+            if ($activeRole && in_array($activeRole, $user->role)) {
                 $request->merge(['active_role' => $activeRole]);
                 return $next($request);
             } else {
                 return BaseResponse::unauthorized();
-            }
-            if (auth()->guard()->user()->is_active && auth()->guard()->user()->is_verified) {
-                if (!$role || ($activeRole == $role || $role === 'all')) {
-                    return $next($request);
-                }
-            } elseif ($role === "verify") {
-                return $next($request);
             }
         }
         return BaseResponse::unauthorized();

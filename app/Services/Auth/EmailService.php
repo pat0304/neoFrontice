@@ -2,13 +2,14 @@
 
 namespace App\Services\Auth;
 
+use App\Eloquents\EmailEloquent;
 use App\Mail\VerifyEmail;
 use App\Models\Email;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class EmailService
+class EmailService implements EmailEloquent
 {
 
     public function create(string $email, User $user): Email
@@ -18,7 +19,7 @@ class EmailService
             'email' => $email,
             'user_id' => $user->id,
             'is_active' => false,
-            'is_verified' => false,
+            'is_verified' => false
         ]);
 
         return $emailModel;
@@ -78,7 +79,7 @@ class EmailService
     {
         try {
             DB::beginTransaction();
-            $email = Email::where('token', $token)
+            $email = Email::where('token', $token)->where("is_verified", false)
                 ->where("user_id", auth()->guard()->user()->id)
                 ->first();
 

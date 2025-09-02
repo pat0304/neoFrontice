@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Eloquents\AuthEloquent;
 use Illuminate\Http\Request;
 use App\Responses\BaseResponse;
 use App\Services\Auth\AuthService;
@@ -11,6 +12,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Responses\User\UserResponse;
 use App\Services\Auth\RefreshTokenService;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Log;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -22,17 +24,18 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct(AuthService $authService, RefreshTokenService $refreshTokenService)
+    public function __construct(AuthEloquent $authEloquent, RefreshTokenService $refreshTokenService)
     {
-        $this->authService = $authService;
+        $this->authService = $authEloquent;
         $this->refreshTokenService = $refreshTokenService;
-        // $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'refresh']]);
     }
 
     public function register(RegisterRequest $request)
     {
+        $data = $request->validated();
         try {
-            $token =  $this->authService->register($request);
+            $token =  $this->authService->register($data);
             if (!$token) {
                 return BaseResponse::error("Registration failed", 400);
             }
@@ -58,10 +61,11 @@ class AuthController extends Controller
                 $cookie = cookie('access_token', $token, 60, null, null, true, true, false, 'Strict');
                 return BaseResponse::success(null, "Login Successfully")->cookie($cookie)->cookie($refreshTokenCookie);
             } else {
-                return response()->json(['error' => 'Unauthorized'], 401);
+                return BaseResponse::unauthorized();
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 401);
+            Log::error($e->getMessage());
+            return BaseResponse::unauthorized();
         }
     }
 
@@ -70,9 +74,9 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
+    public function me(UserResponse $userResponse)
     {
-        return UserResponse::make(auth()->guard()->user());
+        return $userResponse(auth()->guard()->user());
     }
 
     /**
@@ -105,7 +109,8 @@ class AuthController extends Controller
             $cookie = cookie('access_token', $newTokens['access_token'], 60, null, null, true, true, false, 'Strict');
             $refreshTokenCookie = cookie('refresh_token', $newTokens['refresh_token'], 60 * 24 * 30, null, null, true, true, false, 'Strict');
             return BaseResponse::success(null, "Token refreshed successfully")->cookie($cookie)->cookie($refreshTokenCookie);
+        } else {
+            return BaseResponse::error("Refresh Token doesn't exist");
         }
-        return $this->respondWithToken(JWTAuth::refresh());
     }
 }

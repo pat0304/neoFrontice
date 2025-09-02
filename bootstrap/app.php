@@ -4,6 +4,7 @@ use App\Console\Commands\MakeResponseCommand;
 use App\Console\Commands\MakeServiceCommand;
 use App\Exceptions\AppException;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -20,7 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\ForceJsonResponse::class,
             \App\Http\Middleware\SetApiLocale::class,
         ]);
-        $middleware->alias(['auth' => AuthMiddleware::class]);
+        $middleware->alias([
+            'auth' => AuthMiddleware::class,
+            'role' => RoleMiddleware::class
+        ]);
     })->withCommands([MakeServiceCommand::class, MakeResponseCommand::class])
     ->withExceptions(function (Exceptions $exceptions): void {
         //

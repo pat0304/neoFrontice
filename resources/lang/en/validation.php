@@ -33,5 +33,11 @@ return [
             'required' => 'Role is required.',
             'in'       => 'Role must be either tasker or taskee.',
         ],
+        'tax_code' => [
+            'required_if' => 'Tax code is required when role is tasker',
+        ],
+        'company_name' => [
+            'required_if' => 'Company name is required when role is tasker',
+        ],
     ],
 ];

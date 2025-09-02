@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('files', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->ulidMorphs("fileable");
+            $table->uuid("fileable_id")->nullable();
+            $table->string("fileable_type", 50)->nullable();
             $table->string('original_name', 255);
             $table->string('file_path', 255);
             $table->string('mime_type', 50);
             $table->integer('size');
-            $table->enum('usage', ['avatar', 'attachment', 'source', 'figma', 'cv', 'other'])->default('other');
+            $table->enum('usage', ['avatar', 'attachment', 'source', 'figma', 'cv', 'temp', 'other'])->default('other');
             $table->enum('visibility', ['public', 'private'])->default('private');
 
             $table->timestamps();

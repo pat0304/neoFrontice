@@ -2,6 +2,7 @@
 return [
     'welcome' => 'Welcome!',
     'unauthorized' => 'Unauthorized',
+    'forbidden' => 'Forbidden',
     'not_found' => 'Not Found',
     'too_many_requests' => 'Too many requests',
     'validation_error' => 'Validation error',
