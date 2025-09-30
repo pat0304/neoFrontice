@@ -25,4 +25,15 @@ class Email extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public static function useCreate(string $email, User $user, bool $active = false, bool $verified =  false): Email
+    {
+        $emailModel = self::create([
+            'email' => $email,
+            'user_id' => $user->id,
+            'is_active' => $active,
+            'is_verified' => $verified
+        ]);
+
+        return $emailModel;
+    }
 }

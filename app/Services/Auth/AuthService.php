@@ -56,6 +56,7 @@ class AuthService implements AuthEloquent
      */
     public function login(array $credentials)
     {
+
         $user = $this->userService->verifyUser($credentials['email'], $credentials['password']);
         if ($user) {
             return auth()->guard()->login($user);

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('passwords', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->string('password');
-            $table->string('hash_algorithm', 20);
+            $table->string('password')->nullable();
+            $table->string('hash_algorithm', 20)->default('bcrypt');
             $table->string('otp_code', 6)->nullable();
             $table->uuid('token')->nullable();
             $table->tinyInteger('is_verified')->default(0);

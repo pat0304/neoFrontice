@@ -8,16 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class PasswordService
 {
-    public function create(string $password, User $user,  string $hash_algorithm = 'bcrypt')
-    {
-        $passwordModel = new Password();
-        $passwordModel->create([
-            'user_id' => $user->id,
-            'password' => bcrypt($password),
-            'hash_algorithm' => $hash_algorithm
-        ]);
-        return $passwordModel;
-    }
     /**
      * Update the user's password.
      *

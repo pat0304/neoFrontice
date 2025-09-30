@@ -24,4 +24,13 @@ class Password extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public static function useCreate(string $password, User $user,  string $hash_algorithm = 'bcrypt')
+    {
+        $passwordModel = self::create([
+            'user_id' => $user->id,
+            'password' => bcrypt($password),
+            'hash_algorithm' => $hash_algorithm
+        ]);
+        return $passwordModel;
+    }
 }

@@ -76,6 +76,7 @@ class AuthController extends Controller
      */
     public function me(UserResponse $userResponse)
     {
+        $this->authorize('update', auth()->guard()->user()->admin);
         return $userResponse(auth()->guard()->user());
     }
 
@@ -86,11 +87,9 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->guard()->logout();
         $this->refreshTokenService->revoke(request()->cookie('refresh_token'));
-        cookie()->forget('access_token');
-        cookie()->forget('refresh_token');
-        return BaseResponse::success('Successfully logged out');
+        auth()->guard()->logout();
+        return BaseResponse::success('Successfully logged out')->withCookie(cookie()->forget('access_token'))->withCookie(cookie()->forget('refresh_token'));
     }
 
     /**

@@ -7,7 +7,6 @@ use App\Models\User;
 
 interface EmailEloquent
 {
-    public function create(string $email, User $user): Email;
 
     public function sendMail(string $email);
 

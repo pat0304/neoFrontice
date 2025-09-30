@@ -2,14 +2,17 @@
 
 namespace App\Exceptions;
 
-use App\Responses\BaseResponse;
 use Throwable;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Responses\BaseResponse;
+use AWS\CRT\Log;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -40,7 +43,10 @@ class Handler extends ExceptionHandler
 
             // Lỗi validate
             if ($e instanceof ValidationException) {
-                return BaseResponse::error(__('messages.validation_error'), 422);
+                return BaseResponse::error(__('messages.validation_error'), 422, $e->errors());
+            }
+            if ($e instanceof AuthorizationException || $e instanceof AccessDeniedHttpException) {
+                return BaseResponse::forbidden($e->getMessage());
             }
 
             // Mặc định

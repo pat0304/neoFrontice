@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -15,8 +16,8 @@ class Permission extends Model
         'desc',
     ];
 
-    public function rolePermission(): HasMany
+    public function adminRole(): BelongsToMany
     {
-        return $this->hasMany(RolePermission::class);
+        return $this->belongsToMany(AdminRole::class, 'role_permissions', 'permission_id', 'admin_role_id')->withTimestamps();
     }
 }

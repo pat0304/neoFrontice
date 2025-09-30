@@ -31,10 +31,12 @@ class UserResponse extends BaseResponse
 
         return match ($activeRole) {
             'taskee' => array_merge($base, [
+                'cv' => $user->cv,
                 'bio' => optional($user->taskee)->bio,
             ]),
             'tasker' => array_merge($base, [
-                'bio' => optional($user->tasker)->company_username,
+                'bio' => optional($user->tasker)->bio,
+                'company_name' => optional($user->tasker)->company_name,
                 'tax_code' => optional($user->tasker)->tax_code,
             ]),
             'admin' => array_merge($base, [

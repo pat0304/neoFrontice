@@ -56,14 +56,12 @@ class UserService implements UserEloquent
 
     public function verifyUser(string $email, string $password)
     {
-        $passwordModel = new PasswordService();
         try {
             $emailModel = Email::where('email', $email)->firstOrFail();
             $user = $emailModel->user()->with(['avatar', 'cv', 'roles'])->first();
         } catch (\Exception $e) {
             throw new \Exception('User not found: ' . $e->getMessage());
         }
-
         if (!$user || !$user->password) {
             return false;
         }

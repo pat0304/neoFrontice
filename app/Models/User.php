@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Casts\TimestampCast;
+use App\Services\Auth\PasswordService;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,7 +80,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->email()->email ?? null;
     }
-    public function getRoleAttribute()
+    public function getRoleAttribute(): array
     {
         $roles = [];
         foreach ($this->roles as $role) {
@@ -208,10 +209,55 @@ class User extends Authenticatable implements JWTSubject
         $file = $this->files()->where('usage', 'avatar')->first();
         return $file ? $file->url : null;
     }
+    public function avatar()
+    {
+        return $this->hasOne(File::class)->where('usage', 'avatar');
+    }
+    public function cv()
+    {
+        return $this->hasOne(File::class)->where('usage', 'cv');
+    }
     public function getCvAttribute()
     {
-        $file = $this->files()->where('usage', 'cv')->first();
-        return $file ? $file : null;
+        $file = $this->files()->where('usage', 'cv')->latest()->first();
+        return $file ? $file->url : null;
+    }
+    public static function useCreate(array $array)
+    {
+        $user = DB::transaction(function () use ($array) {
+            $user = self::create([
+                'username'   => $array['username'] ?? null,
+                'first_name' => $array['first_name'] ?? null,
+                'last_name'  => $array['last_name'] ?? null,
+                'is_active'  => $array['is_active'] ?? false,
+            ]);
+
+            if (isset($array['email'])) {
+                Email::useCreate($array['email'], $user, $array['is_active'] ?? false, $array['is_verified'] ?? false);
+            }
+            if (isset($array['password'])) {
+                Password::useCreate($array['password'], $user);
+            }
+            if (isset($array['role']) && $array['role'] !== 'admin') {
+                $role = new Role();
+                $role->user_id = $user->id;
+                $role->role = $array['role'];
+                $role->main = true;
+                $role->save();
+
+                if ($array['role'] == 'taskee') {
+                    $taskee = new Taskee();
+                    $taskee->id = $user->id;
+                    $taskee->save();
+                } elseif ($array['role'] == 'tasker') {
+                    $tasker = new Tasker();
+                    $tasker->id = $user->id;
+                    $tasker->save();
+                }
+            }
+            return $user;
+        });
+        return $user;
     }
 
     //CUSTOM Function

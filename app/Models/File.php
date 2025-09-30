@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class File extends Model
 {
     use HasUuids;
-    protected $fillable = ['user_id', 'fileable_type', 'fileable_id', 'original_name', 'file_path', 'mime_type', 'size', 'usage', 'visibility'];
+    protected $fillable = ['user_id', 'fileable_type', 'fileable_id', 'original_name', 'file_path', 'mime_type', 'size', 'usage', 'visibility', 'storage_disk'];
     protected $casts = [
         'user_id' => 'string',
         'fileable_id' => 'string',
@@ -29,10 +29,17 @@ class File extends Model
     }
     public function getUrlAttribute()
     {
+        if ($this->storage_disk === 'gcs') {
+            if ($this->visibility === 'public') {
+                return gcs_temporary_url($this->file_path, 10);
+            } else {
+                return gcs_temporary_url($this->file_path, 1);
+            }
+        }
         if ($this->visibility === 'public') {
-            return Storage::disk('s3')->temporaryUrl($this->file_path, now()->addMinutes(10));
+            return Storage::disk($this->storage_disk)->temporaryUrl($this->file_path, now()->addMinutes(10));
         } else {
-            return Storage::disk('s3')->temporaryUrl($this->file_path, now()->addMinutes(1));
+            return Storage::disk($this->storage_disk)->temporaryUrl($this->file_path, now()->addMinulàtes(1));
         }
     }
 }

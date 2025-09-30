@@ -12,18 +12,6 @@ use Illuminate\Support\Facades\Mail;
 class EmailService implements EmailEloquent
 {
 
-    public function create(string $email, User $user): Email
-    {
-        $emailModel = new Email();
-        $emailModel->create([
-            'email' => $email,
-            'user_id' => $user->id,
-            'is_active' => false,
-            'is_verified' => false
-        ]);
-
-        return $emailModel;
-    }
     public function sendMail(string $email)
     {
         try {

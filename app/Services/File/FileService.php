@@ -15,13 +15,18 @@ class FileService implements FileEloquent
     {
         $filename = $file->getClientOriginalName();
         $path = 'temp/' . auth()->guard()->user()->id . strtotime(now()) . '_' . Str::random(16);
+        $storage_disk = 's3';
         DB::beginTransaction();
         try {
-            $success = Storage::disk('s3')->put($path, file_get_contents($file));
+            $success = false;
+            // $success = Storage::disk('s3')->put($path, file_get_contents($file));
             if (!$success) {
-                throw new \Exception("Upload failed: return false");
+                $storage_disk = 'gcs';
+                $firebaseStorage = Storage::disk('gcs')->put($path, file_get_contents($file));
+                if (!$firebaseStorage) {
+                    throw new \Exception("Upload failed: return false");
+                }
             }
-
             $fileModel = File::create([
                 'user_id' => auth()->guard()->user()->id,
                 'original_name' => $filename,
@@ -30,6 +35,7 @@ class FileService implements FileEloquent
                 'size' => $file->getSize(),
                 'usage' => 'temp',
                 'visibility' => 'private',
+                'storage_disk' => $storage_disk,
             ]);
             DB::commit();
             return ['link' => $fileModel->url, 'file_path' => $path, 'original_name' => $filename, 'mime_type' => $file->getClientMimeType(), 'size' => $file->getSize()];
@@ -47,7 +53,7 @@ class FileService implements FileEloquent
         DB::beginTransaction();
         try {
             $newPath = $usage . '/' . $user->id . '/' . strtotime(now()) . '_' . Str::random(16);
-            Storage::disk('s3')->move($path, $newPath);
+            Storage::disk($file->storage_disk)->move($path, $newPath);
             $file->file_path = $newPath;
             $file->usage = $usage;
             $file->visibility = $visibility;

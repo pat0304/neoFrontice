@@ -13,6 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        /**
+         * Bind Eloquent to Service
+         * Format: [Eloquent, Service]
+         */
         $services = [
             [
                 "Auth",
@@ -31,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
                 "File\\File"
             ]
         ];
+
+
         foreach ($services as $service) {
             $this->app->bind(
                 "App\\Eloquents\\{$service[0]}Eloquent",

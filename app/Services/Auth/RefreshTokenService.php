@@ -12,7 +12,7 @@ class RefreshTokenService
     public function create()
     {
         $token = Str::random(64);
-        $refreshToken = RefreshToken::create([
+        RefreshToken::create([
             'user_id' => auth()->guard()->user()->id,
             'ip_address' => request()->ip(),
             'user_agent' => request()->header('User-Agent') ?? 'unknown',

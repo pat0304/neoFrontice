@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('size');
             $table->enum('usage', ['avatar', 'attachment', 'source', 'figma', 'cv', 'temp', 'other'])->default('other');
             $table->enum('visibility', ['public', 'private'])->default('private');
-
+            $table->string('storage_disk', 25)->default('s3');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
