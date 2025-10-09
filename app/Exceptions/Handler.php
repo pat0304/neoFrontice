@@ -45,11 +45,17 @@ class Handler extends ExceptionHandler
             if ($e instanceof ValidationException) {
                 return BaseResponse::error(__('messages.validation_error'), 422, $e->errors());
             }
-            if ($e instanceof AuthorizationException || $e instanceof AccessDeniedHttpException) {
+            if ($e instanceof AuthorizationException) {
                 return BaseResponse::forbidden($e->getMessage());
             }
+            if ($e instanceof AccessDeniedHttpException) {
 
-            // Mặc định
+                $previous = $e->getPrevious();
+                $message = $previous?->getMessage() ?: __('messages.forbidden');
+
+                return BaseResponse::forbidden($message);
+            }
+
             return BaseResponse::error(__('messages.internal_server_error'), 500);
         });
     }

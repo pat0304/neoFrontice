@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Eloquents\AuthEloquent;
+use App\Models\User;
 use App\Services\Auth\AuthService;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
             [
                 "File",
                 "File\\File"
+            ],
+            [
+                'Password',
+                'Auth\\Password'
             ]
         ];
 
@@ -48,5 +53,14 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void {}
+    public function boot(): void
+    {
+        foreach (glob(app_path('Observers') . '/*Observer.php') as $filename) {
+            $observer = 'App\\Observers\\' . pathinfo($filename, PATHINFO_FILENAME);
+            $model = 'App\\Models\\' . pathinfo(str_replace('Observer', '', $filename), PATHINFO_FILENAME);
+            if (class_exists($observer) && class_exists($model)) {
+                $model::observe($observer);
+            }
+        }
+    }
 }

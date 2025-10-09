@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class History extends Model
 {
-    protected $fillable = ['user_id', 'history_type', 'history_id', 'action'];
+    protected $fillable = ['user_id', 'history_type', 'history_id', 'action', 'meta'];
 
     protected $casts = [
+        'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

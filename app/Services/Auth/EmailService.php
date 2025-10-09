@@ -11,7 +11,23 @@ use Illuminate\Support\Facades\Mail;
 
 class EmailService implements EmailEloquent
 {
-
+    public function create(string $email, User $user)
+    {
+        try {
+            DB::beginTransaction();
+            $new = Email::useCreate(
+                $email,
+                $user,
+                false,
+                false,
+            );
+            DB::commit();
+            return $new;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception('Database transaction failed: ' . $e->getMessage());
+        }
+    }
     public function sendMail(string $email)
     {
         try {

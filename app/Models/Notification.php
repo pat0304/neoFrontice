@@ -27,4 +27,8 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function notifiable()
+    {
+        return $this->morphTo();
+    }
 }

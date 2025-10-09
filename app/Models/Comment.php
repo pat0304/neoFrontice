@@ -47,4 +47,8 @@ class Comment extends Model
     {
         return $this->hasMany(CommentInteraction::class);
     }
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
 }

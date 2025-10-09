@@ -9,7 +9,12 @@ return [
         'email' => [
             'verify' => 'auth/email/verify?token=',
             'resend' => 'auth/email/resend',
-        ]
+        ],
+        'password' => [
+            'change' => 'auth/password/change',
+            'send_mail' => 'v1/auth/password/send-mail',
+            'reset' => 'v1/auth/password/reset?token=',
+        ],
     ],
     'files' => [
         'avatar' => 'files/avatar',

@@ -49,4 +49,8 @@ class Task extends Model
         $file = $this->files()->where('usage', 'figma')->first();
         return $file ? $file->url : null;
     }
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
 }

@@ -9,5 +9,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CommentInteraction extends Model
 {
-    
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
 }

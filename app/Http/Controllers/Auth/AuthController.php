@@ -12,6 +12,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Responses\User\UserResponse;
 use App\Services\Auth\RefreshTokenService;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 

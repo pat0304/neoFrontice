@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Casts\TimestampCast;
+use App\Responses\BaseResponse;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @mixin IdeHelperPassword
@@ -26,11 +27,24 @@ class Password extends Model
     }
     public static function useCreate(string $password, User $user,  string $hash_algorithm = 'bcrypt')
     {
-        $passwordModel = self::create([
+        $passwordModel = $user->passwords();
+        $isTrue = ($passwordModel->count() > 0);
+        if (($isTrue)) {
+            foreach ($passwordModel->get() as $item) {
+                if (Hash::check($password, $item->password)) {
+                    abort(BaseResponse::error(__('messages.password_already_used'), 422));
+                }
+            }
+        }
+        $new = $passwordModel->create([
             'user_id' => $user->id,
             'password' => bcrypt($password),
             'hash_algorithm' => $hash_algorithm
         ]);
-        return $passwordModel;
+        return $new;
+    }
+    public function setPassword(string $password, string $hash_algorithm = 'bcrypt')
+    {
+        return self::useCreate($password, $this->user, $hash_algorithm);
     }
 }

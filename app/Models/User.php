@@ -63,7 +63,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
+    public function password()
+    {
+        return $this->hasOne(Password::class)->latestOfMany();
+    }
     public function getPasswordAttribute()
     {
         return $this->passwords()->latest()->value('password');

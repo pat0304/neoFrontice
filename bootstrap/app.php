@@ -2,6 +2,7 @@
 
 use App\Console\Commands\DeleteTempFile;
 use App\Console\Commands\MakeResponseCommand;
+use App\Console\Commands\MakeRouteCommand;
 use App\Console\Commands\MakeServiceCommand;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\RoleMiddleware;
@@ -34,7 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })->withCommands([
         MakeServiceCommand::class,
         MakeResponseCommand::class,
-        DeleteTempFile::class
+        DeleteTempFile::class,
+        MakeRouteCommand::class,
     ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //

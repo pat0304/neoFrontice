@@ -9,5 +9,6 @@ return [
     'internal_server_error' => 'Internal server error',
     'route_not_found' => 'Route not found',
     'data_invalid' => 'Data is invalid',
-    'success' => 'Operation successful'
+    'success' => 'Operation successful',
+    'password_already_used' => 'You have used this password before. Please choose a different password.',
 ];
