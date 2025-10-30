@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id'); // Ai tạo
             $table->string('action'); // Hành động: "created", "updated", "deleted", v.v.
-            $table->string('model_type'); // Loại model: "Task", "Solution", "User", ...
-            $table->uuid('model_id'); // ID của bản ghi
+            $table->string('historiable_type'); // Loại model: "Task", "Solution", "User", ...
+            $table->uuid('historiable_id'); // ID của bản ghi
             $table->json('meta')->nullable(); // Dữ liệu bổ sung (nếu cần)
             $table->timestamps();
 

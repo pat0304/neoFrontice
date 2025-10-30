@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class RolePermission extends Model
 {
+    use \App\Traits\Historiable;
     protected $fillable = [
         'admin_role_id',
         'permission_id',

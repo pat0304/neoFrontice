@@ -10,4 +10,5 @@ return [
     'route_not_found' => 'Không tìm thấy đường dẫn',
     'data_invalid' => 'Dữ liệu không hợp lệ',
     'pssword_already_used' => 'Bạn đã sử dụng mật khẩu này trước đây. Vui lòng chọn một mật khẩu khác.',
+    'exists' => ':attribute đã tồn tại.'
 ];

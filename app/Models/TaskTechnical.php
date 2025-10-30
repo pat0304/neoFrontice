@@ -9,5 +9,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TaskTechnical extends Model
 {
+    use \App\Traits\Historiable;
     //
 }

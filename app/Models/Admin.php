@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AccessLevel;
+use App\Traits\Historiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
  */
 class Admin extends Model
 {
-    use HasUuids;
+    use HasUuids, Historiable;
     protected $fillable = [
         'id',
         'admin_role_id',
@@ -53,7 +54,7 @@ class Admin extends Model
     public function showRole()
     {
         $permissions = [];
-        foreach ($this->thisRole->permissions as $permission) {
+        foreach ($this->adminRole->permissions as $permission) {
             $detail = explode('.', $permission->name);
             $permissions[$detail[0]][] = $detail[1];
         }

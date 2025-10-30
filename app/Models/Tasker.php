@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Tasker extends Model
 {
+    use \App\Traits\Historiable;
     use HasUuids;
     public $incrementing = false;
     protected $keyType = 'string';

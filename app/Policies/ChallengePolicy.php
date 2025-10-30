@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Enums\AccessLevel;
+use App\Enums\Permission\Permission;
 use App\Models\Challenge;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -29,7 +31,11 @@ class ChallengePolicy extends BasePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        $admin = $user->admin;
+        $roles = $admin->showRole()['permissions'];
+        if (in_array('create', $roles[Permission::CHALLENGES->value])) {
+            return true;
+        } else return false;
     }
 
     /**
@@ -37,6 +43,14 @@ class ChallengePolicy extends BasePolicy
      */
     public function update(User $user, Challenge $challenge): bool
     {
+        $admin = $user->admin;
+        $owner = $challenge->user->admin;
+        if ($owner->id == $admin->id)
+            return true;
+        else if ($admin->access_level == AccessLevel::SUPER_ADMIN->value)
+            return true;
+        else if ($admin->access_level <= $owner->access_level)
+            return true;
         return false;
     }
 

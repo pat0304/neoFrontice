@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Responses\BaseResponse;
+use App\Traits\Historiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
  */
 class Password extends Model
 {
-    use HasUuids;
+    use HasUuids, Historiable;
     protected $fillable = ['id', 'user_id', 'password', 'hash_algorithm', 'otp_code', 'token', 'is_verified', 'otp_sent_at', 'expires_at'];
     protected $keyType = 'string';
     public $incrementing = false;

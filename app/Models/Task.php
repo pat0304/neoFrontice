@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Task extends Model
 {
+    use \App\Traits\Historiable;
     use HasUuids;
     protected $fillable = ['user_id', 'title', 'desc', 'short_desc', 'required_point', 'start_at', 'expires_at', 'is_paied'];
     protected $keyType = 'string';
@@ -48,9 +49,5 @@ class Task extends Model
     {
         $file = $this->files()->where('usage', 'figma')->first();
         return $file ? $file->url : null;
-    }
-    public function notifications()
-    {
-        return $this->morphMany(Notification::class, 'notifiable');
     }
 }

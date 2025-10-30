@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -9,7 +10,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class History extends Model
 {
-    protected $fillable = ['user_id', 'history_type', 'history_id', 'action', 'meta'];
+    use HasUuids;
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $fillable = ['user_id', 'historiable_type', 'historiable_id', 'action', 'meta'];
 
     protected $casts = [
         'meta' => 'array',
@@ -22,7 +26,7 @@ class History extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function historyable()
+    public function historiable()
     {
         return $this->morphTo();
     }

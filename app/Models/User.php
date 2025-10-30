@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Casts\TimestampCast;
 use App\Services\Auth\PasswordService;
+use App\Traits\Historiable;
+use App\Traits\Sortable;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +24,7 @@ use Throwable;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes, HasUuids;
+    use HasFactory, Notifiable, SoftDeletes, HasUuids, Historiable, Sortable;
 
     protected $fillable = [
         'id',
@@ -174,10 +176,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Report::class);
     }
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
     public function tasks()
     {
         return $this->hasMany(Task::class);
@@ -186,10 +184,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Challenge::class);
     }
-    public function histories()
-    {
-        return $this->hasMany(History::class);
-    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
@@ -273,6 +268,62 @@ class User extends Authenticatable implements JWTSubject
             $this[$active_role]->update($array);
             return $this;
         });
+    }
+    public function useCast(?string $role = null)
+    {
+        $activeRole = $role ?? request()->get('active_role');
+
+        $base = [
+            'id' => $this->id,
+            'username' => $this->username,
+            'firstName' => $this->first_name,
+            'lastName' => $this->last_name,
+            'email' => $this->email,
+            'is_active' => $this->is_active,
+            'is_verified' => $this->is_verified,
+            'role' => $this->role,
+            'links' => $this->link,
+            'avatar' => $this->avatar,
+            'created_at' => $this->created_at->toISOString()
+        ];
+
+        return match ($activeRole) {
+            'taskee' => array_merge($base, [
+                'cv' => $this->cv,
+                'bio' => optional($this->taskee)->bio,
+            ]),
+            'tasker' => array_merge($base, [
+                'bio' => optional($this->tasker)->bio,
+                'company_name' => optional($this->tasker)->company_name,
+                'tax_code' => optional($this->tasker)->tax_code,
+            ]),
+            'admin' => array_merge($base, [
+                'adminRole' => optional($this->admin)->adminRole,
+            ]),
+            default => $base,
+        };
+    }
+    public static function getUsers(string $role, ?string $id = null)
+    {
+        if (!$id) {
+            $users = self::whereHas('roles', function ($query) use ($role) {
+                $query->where('role', $role);
+            })->usePaginate();
+            $data = [];
+            foreach ($users as $user) {
+                $data['users'] = $user->useCast($role);
+            }
+            $data['total'] = $users->total();
+            $data['currentPage'] = $users->currentPage();
+            $data['lastPage'] = $users->lastPage();
+            $data['perPage'] = $users->perPage();
+            return $data;
+        } else {
+            $user = self::whereHas('roles', function ($query) use ($role) {
+                $query->where('role', $role);
+            })->find($id);
+            return $user ? $user->useCast($role) : null;
+        }
     }
 
     protected static function boot()

@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('challenges', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('level_id');
             $table->foreign('level_id')->references('id')->on('levels')->onDelete('restrict');
+            $table->boolean('published')->default(false);
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

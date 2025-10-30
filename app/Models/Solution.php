@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Solution extends Model
 {
+    use \App\Traits\Historiable;
     use HasUuids;
     protected $fillable = ['user_id', 'challenge_id', 'title', 'desc', 'github_url', 'live_page', 'joined_at', 'solved_at'];
     protected $casts = [
@@ -37,9 +38,5 @@ class Solution extends Model
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
-    }
-    public function notifications()
-    {
-        return $this->morphMany(Notification::class, 'notifiable');
     }
 }

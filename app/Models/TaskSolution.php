@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class TaskSolution extends Model
 {
     use HasUuids;
+    use \App\Traits\Historiable;
     protected $fillable = ['user_id', 'task_id', 'title', 'desc', 'github_url', 'live_page', 'joined_at', 'solved_at', 'is_viewed', 'tasker_review'];
     protected $casts = [
         'joined_at' => 'datetime',
@@ -30,9 +31,5 @@ class TaskSolution extends Model
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
-    }
-    public function notifications()
-    {
-        return $this->morphMany(Notification::class, 'notifiable');
     }
 }

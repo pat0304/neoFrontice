@@ -9,10 +9,7 @@ class UserObserver
     /**
      * Handle the User "created" event.
      */
-    public function created(User $user): void
-    {
-        add_history($user, 'created');
-    }
+    public function created(User $user): void {}
 
     /**
      * Handle the User "updated" event.

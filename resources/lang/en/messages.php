@@ -11,4 +11,5 @@ return [
     'data_invalid' => 'Data is invalid',
     'success' => 'Operation successful',
     'password_already_used' => 'You have used this password before. Please choose a different password.',
+    'exists' => ':attribute is exists.'
 ];

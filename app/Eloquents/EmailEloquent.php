@@ -13,5 +13,5 @@ interface EmailEloquent
     public function verifyEmailByOTP(string $otp);
 
     public function verifyEmailByToken(string $token);
-    public funtion addEmail(User $user, string $email);
+    // public funtion addEmail(User $user, string $email);
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Setting extends Model
 {
+    use \App\Traits\Historiable;
     use HasUuids;
     protected $fillable = ['user_id', 'lang', 'notifiable_comment', 'notifiable_comment_replied', 'notifiable_solution_like', 'notifiable_for_archievement'];
 

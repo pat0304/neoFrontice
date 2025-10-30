@@ -15,18 +15,21 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::useCreate(
-            [
-                'username' => 'ROOT',
-                'email'    => 'admin@frontice.com',
-                'password' => '12345678',
-                'role'     => 'admin',
-                'first_name' => 'Admin',
-                'last_name'  => 'Frontice',
-                'is_active'  => true,
-                'admin_role_id' => \App\Models\AdminRole::where('name', 'root')->first()->id,
-                'access_level'  => \App\Enums\AccessLevel::SUPER_ADMIN,
-            ]
-        );
+        if (Admin::count() == 0) {
+            Admin::useCreate(
+                [
+                    'username' => 'ROOT',
+                    'email'    => 'admin@frontice.com',
+                    'password' => '12345678',
+                    'role'     => 'admin',
+                    'first_name' => 'Admin',
+                    'last_name'  => 'Frontice',
+                    'is_active'  => true,
+                    'is_verified' => true,
+                    'admin_role_id' => \App\Models\AdminRole::where('name', 'root')->first()->id,
+                    'access_level'  => \App\Enums\AccessLevel::SUPER_ADMIN,
+                ]
+            );
+        }
     }
 }

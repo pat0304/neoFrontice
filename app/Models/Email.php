@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\TimestampCast;
+use App\Traits\Historiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Email extends Model
 {
-    use HasUuids;
+    use HasUuids, Historiable;
     protected $fillable = ['id', 'user_id', 'email', 'otp_code', 'token', 'is_verified', 'is_active', 'expires_at'];
     protected $keyType = 'string';
     public $incrementing = false;

@@ -7,8 +7,8 @@ return [
         'refresh' => 'auth/refresh',
         'profile' => 'auth/profile',
         'email' => [
-            'verify' => 'auth/email/verify?token=',
-            'resend' => 'auth/email/resend',
+            'verify' => 'v1/auth/email/verify?token=',
+            'resend' => 'v1/auth/email/resend',
         ],
         'password' => [
             'change' => 'auth/password/change',

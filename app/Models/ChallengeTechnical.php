@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Historiable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -9,5 +10,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ChallengeTechnical extends Model
 {
-    //
+    use Historiable;
 }

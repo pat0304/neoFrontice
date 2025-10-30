@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Technical extends Model
 {
     //
+    use \App\Traits\Historiable;
     protected $fillable = ['name', 'icon', 'color'];
 
     public function challenges()

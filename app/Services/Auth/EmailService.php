@@ -66,12 +66,12 @@ class EmailService implements EmailEloquent
             if (!$email || $email->expires_at < now() || !$email->is_active) {
                 return false;
             }
-            $email->is_verified = true;
-            $email->save();
+            $email->update(['is_verified' => true]);
             $user = $email->user;
-            $user->is_active = true;
-            $user->is_verified = true;
-            $user->save();
+            $user->update([
+                'is_active' => true,
+                'is_verified' => true
+            ]);
             DB::commit();
             return $email;
         } catch (\Exception $e) {
@@ -90,12 +90,12 @@ class EmailService implements EmailEloquent
             if (!$email || $email->expires_at < now() || !$email->is_active) {
                 return false;
             }
-            $email->is_verified = true;
-            $email->save();
+            $email->update(['is_verified' => true]);
             $user = $email->user;
-            $user->is_active = true;
-            $user->is_verified = true;
-            $user->save();
+            $user->update([
+                'is_active' => true,
+                'is_verified' => true
+            ]);
             DB::commit();
             return $email;
         } catch (\Exception $e) {

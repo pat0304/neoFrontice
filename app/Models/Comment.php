@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Historiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Comment extends Model
 {
-    use HasUuids;
+    use HasUuids, Historiable;
     protected $fillable = [
         'user_id',
         'is_admin_feedback',
@@ -46,9 +47,5 @@ class Comment extends Model
     public function interactions()
     {
         return $this->hasMany(CommentInteraction::class);
-    }
-    public function notifications()
-    {
-        return $this->morphMany(Notification::class, 'notifiable');
     }
 }

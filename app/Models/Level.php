@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Level extends Model
 {
-    protected $fillable = ['name', 'default_points', 'require_points', 'icon', 'background', 'color'];
+    protected $fillable = ['name', 'default_points', 'required_points', 'icon', 'background', 'color'];
 
     public function challenges()
     {
